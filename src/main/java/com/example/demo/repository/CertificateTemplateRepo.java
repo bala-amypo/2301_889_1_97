@@ -2,8 +2,8 @@ package com.example.demo.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.demo.model.FraqudCheckResult;
+import com.example.demo.entity.CertificateTemplate;
 
-public interface FraudCheckResultRepo extends JpaRepository<FraudCheckResult , Long>{
+public interface CertificateTemplateRepo extends JpaRepository<CertificateTemplate , Long>{
     
 }
