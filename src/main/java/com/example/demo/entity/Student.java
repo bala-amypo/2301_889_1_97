@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
 public class Student{
     @Id
     private Long id;
