@@ -8,6 +8,7 @@ public class CertificateTemplate{
     private Long id;
     @Column(unique=true)
     private String templateName;
+    @URL(message = "Background URL must be a valid URL")
     private String backgroundUrl;
     private String fontStyle;
     private String signatureName;
