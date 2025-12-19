@@ -20,8 +20,10 @@ public class User{
         ADMIN = aDMIN;
         STAFF = sTAFF;
     }
+
     public User() {
     }
+    
     public Long getId() {
         return id;
     }

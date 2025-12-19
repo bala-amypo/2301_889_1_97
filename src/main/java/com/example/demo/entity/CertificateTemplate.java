@@ -14,7 +14,8 @@ public class CertificateTemplate{
     private String signatureName;
 
     
-    public CertificateTemplate(Long id, String templateName, String backgroundUrl, String fontStyle,
+    public CertificateTemplate(Long id, String templateName,
+            @URL(message = "Background URL must be a valid URL") String backgroundUrl, String fontStyle,
             String signatureName) {
         this.id = id;
         this.templateName = templateName;

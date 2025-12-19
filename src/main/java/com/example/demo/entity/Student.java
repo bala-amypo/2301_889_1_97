@@ -18,8 +18,10 @@ public class Student{
         this.email = email;
         this.rollNumber = rollNumber;
     }
+
     public Student() {
     }
+    
     public Long getId() {
         return id;
     }
