@@ -1,6 +1,28 @@
 package com.example.demo.entity;
 
 public class Certificate{
+    Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private Student student;
+
+    @ManyToOne
+    @JoinColumn(name = "template_id")
+    private CertificateTemplate template;
+
+    private LocalDate issuedDate;
+
+    @Column(unique = true)
+    private String verificationCode;
+
+    @Lob
+    private String qrCodeUrl;
+
+    @OneToMany(mappedBy = "certificate")
+    private List<VerificationLog> logs;
     
     public Certificate(Long id, Student student, CertificateTemplate template, LocalDate issuedDate,
             String verificationCode, String qrCodeUrl, List<VerificationLog> logs) {
