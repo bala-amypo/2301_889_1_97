@@ -1,45 +1,26 @@
-package com.example.demo.service.impl;
-
-import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.service.UserService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final UserRepository repo;
+    private final BCryptPasswordEncoder encoder;
 
-    public UserServiceImpl(UserRepository userRepository,
-                           BCryptPasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    public UserServiceImpl(UserRepository repo, BCryptPasswordEncoder encoder) {
+        this.repo = repo;
+        this.encoder = encoder;
     }
 
-    @Override
     public User register(User user) {
+        if (repo.findByEmail(user.getEmail()).isPresent())
+            throw new RuntimeException("Email already exists");
 
-        userRepository.findByEmail(user.getEmail())
-                .ifPresent(u -> {
-                    throw new RuntimeException("User email exists");
-                });
-
-        // role nullனா STAFF set ஆகணும்
-        if (user.getRole() == null) {
+        if (user.getRole() == null)
             user.setRole("STAFF");
-        }
 
-        // password BCrypt hash
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        return userRepository.save(user);
+        user.setPassword(encoder.encode(user.getPassword()));
+        return repo.save(user);
     }
 
-    @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElse(null);
+        return repo.findByEmail(email).orElse(null);
     }
 }
