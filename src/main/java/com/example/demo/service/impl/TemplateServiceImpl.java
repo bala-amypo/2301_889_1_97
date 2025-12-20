@@ -1,25 +1,49 @@
+package com.example.demo.service.impl;
+
+import com.example.demo.entity.CertificateTemplate;
+import com.example.demo.repository.CertificateTemplateRepository;
+import com.example.demo.service.TemplateService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+
 @Service
+@RequiredArgsConstructor
 public class TemplateServiceImpl implements TemplateService {
 
-    private final CertificateTemplateRepository repo;
+    private final CertificateTemplateRepository templateRepository;
 
-    public TemplateServiceImpl(CertificateTemplateRepository repo) {
-        this.repo = repo;
-    }
-
-    public CertificateTemplate addTemplate(CertificateTemplate t) {
-        if (repo.findByTemplateName(t.getTemplateName()).isPresent())
+    @Override
+    public CertificateTemplate addTemplate(CertificateTemplate template) {
+        templateRepository.findByTemplateName(template.getTemplateName()).ifPresent(t -> {
             throw new RuntimeException("Template name exists");
+        });
 
-        return repo.save(t);
+        // Validate background URL
+        if (template.getBackgroundUrl() == null || template.getBackgroundUrl().isBlank()) {
+            throw new RuntimeException("Invalid background URL");
+        }
+        try {
+            new URL(template.getBackgroundUrl());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Invalid background URL");
+        }
+
+        return templateRepository.save(template);
     }
 
+    @Override
     public List<CertificateTemplate> getAllTemplates() {
-        return repo.findAll();
+        return templateRepository.findAll();
     }
 
+    @Override
     public CertificateTemplate findById(Long id) {
-        return repo.findById(id)
-          .orElseThrow(() -> new ResourceNotFoundException("Template not found"));
+        return templateRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Template not found"));
     }
 }
+
