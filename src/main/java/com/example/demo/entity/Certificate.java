@@ -1,11 +1,76 @@
 package com.example.demo.entity;
 
 public class Certificate{
-    @Id
-    private Long id;
-    private LocalDate issuedDate;
-    private String qrCodeUrl;
-    @Column(unique=true)
-    private String verificationCode;
+    
+    public Certificate(Long id, Student student, CertificateTemplate template, LocalDate issuedDate,
+            String verificationCode, String qrCodeUrl, List<VerificationLog> logs) {
+        this.id = id;
+        this.student = student;
+        this.template = template;
+        this.issuedDate = issuedDate;
+        this.verificationCode = verificationCode;
+        this.qrCodeUrl = qrCodeUrl;
+        this.logs = logs;
+    }
+
+    public Certificate() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public CertificateTemplate getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(CertificateTemplate template) {
+        this.template = template;
+    }
+
+    public LocalDate getIssuedDate() {
+        return issuedDate;
+    }
+
+    public void setIssuedDate(LocalDate issuedDate) {
+        this.issuedDate = issuedDate;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public String getQrCodeUrl() {
+        return qrCodeUrl;
+    }
+
+    public void setQrCodeUrl(String qrCodeUrl) {
+        this.qrCodeUrl = qrCodeUrl;
+    }
+
+    public List<VerificationLog> getLogs() {
+        return logs;
+    }
+
+    public void setLogs(List<VerificationLog> logs) {
+        this.logs = logs;
+    }
+
 }
 
