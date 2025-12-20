@@ -1,48 +1,25 @@
-package com.example.demo.service.;
-
-import com.example.demo.entity.CertificateTemplate;
-import com.example.demo.repository.CertificateTemplateRepository;
-import com.example.demo.service.TemplateService;
-import org.springframework.stereotype.Service;
-
-import java.net.URL;
-
 @Service
 public class TemplateServiceImpl implements TemplateService {
 
-    private final CertificateTemplateRepository templateRepository;
+    private final CertificateTemplateRepository repo;
 
-    public TemplateServiceImpl(CertificateTemplateRepository templateRepository) {
-        this.templateRepository = templateRepository;
+    public TemplateServiceImpl(CertificateTemplateRepository repo) {
+        this.repo = repo;
     }
 
-    @Override
-    public CertificateTemplate addTemplate(CertificateTemplate template) {
+    public CertificateTemplate addTemplate(CertificateTemplate t) {
+        if (repo.findByTemplateName(t.getTemplateName()).isPresent())
+            throw new RuntimeException("Template name exists");
 
-        templateRepository.findByTemplateName(template.getTemplateName())
-                .ifPresent(t -> {
-                    throw new RuntimeException("Template name exists");
-                });
-
-        // backgroundUrl validation
-        try {
-            new URL(template.getBackgroundUrl());
-        } catch (Exception e) {
-            throw new RuntimeException("Invalid backgroundUrl");
-        }
-
-        return templateRepository.save(template);
+        return repo.save(t);
     }
 
-    @Override
     public List<CertificateTemplate> getAllTemplates() {
-        return templateRepository.findAll();
+        return repo.findAll();
     }
 
-    @Override
     public CertificateTemplate findById(Long id) {
-        return templateRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Template not found"));
+        return repo.findById(id)
+          .orElseThrow(() -> new ResourceNotFoundException("Template not found"));
     }
 }
