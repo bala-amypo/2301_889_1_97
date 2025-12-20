@@ -1,9 +1,11 @@
 package com.example.demo.repository;
 
+import com.example.demo.entity.VerificationLog;
+import com.example.demo.entity.Certificate;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.demo.entity.VerificationLog;
+import java.util.List;
 
-public interface VerificationLogRepo extends JpaRepository<VerificationLog , Long>{
-    
+public interface VerificationLogRepository extends JpaRepository<VerificationLog, Long> {
+    List<VerificationLog> findByCertificate(Certificate certificate);
 }
