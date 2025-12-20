@@ -3,6 +3,9 @@ package com.example.demo.entity;
 
 import jakarta.persistence.Id;
 
+@Entity
+@Table(name="verification_logs")
+
 public class VerificationLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
