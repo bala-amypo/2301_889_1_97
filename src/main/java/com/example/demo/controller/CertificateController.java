@@ -2,42 +2,40 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Certificate;
 import com.example.demo.service.CertificateService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/certificates")
-@RequiredArgsConstructor
 public class CertificateController {
 
-    private final CertificateService certificateService;
+    private final CertificateService service;
 
+    public CertificateController(CertificateService service) {
+        this.service = service;
+    }
+
+    // POST /certificates/generate/{studentId}/{templateId}
     @PostMapping("/generate/{studentId}/{templateId}")
-    public ResponseEntity<Certificate> generateCertificate(
+    public Certificate generateCertificate(
             @PathVariable Long studentId,
             @PathVariable Long templateId) {
-        Certificate certificate = certificateService.generateCertificate(studentId, templateId);
-        return ResponseEntity.ok(certificate);
+
+        return service.generateCertificate(studentId, templateId);
     }
 
+    // GET /certificates/{certificateId}
     @GetMapping("/{certificateId}")
-    public ResponseEntity<Certificate> getCertificate(@PathVariable Long certificateId) {
-        Certificate certificate = certificateService.getCertificate(certificateId);
-        return ResponseEntity.ok(certificate);
+    public Certificate getCertificate(
+            @PathVariable Long certificateId) {
+
+        return service.getCertificate(certificateId);
     }
 
+    // GET /certificates/verify/code/{verificationCode}
     @GetMapping("/verify/code/{verificationCode}")
-    public ResponseEntity<Certificate> verifyByCode(@PathVariable String verificationCode) {
-        Certificate certificate = certificateService.findByVerificationCode(verificationCode);
-        return ResponseEntity.ok(certificate);
-    }
+    public Certificate verifyByCode(
+            @PathVariable String verificationCode) {
 
-    @GetMapping("/student/{studentId}")
-    public ResponseEntity<List<Certificate>> getCertificatesByStudent(@PathVariable Long studentId) {
-        List<Certificate> certificates = certificateService.findByStudentId(studentId);
-        return ResponseEntity.ok(certificates);
+        return service.findByVerificationCode(verificationCode);
     }
 }
