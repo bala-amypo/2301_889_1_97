@@ -1,5 +1,8 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+
 public class Certificate{
     Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
