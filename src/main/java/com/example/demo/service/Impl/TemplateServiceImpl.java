@@ -1,0 +1,48 @@
+package com.example.demo.service.impl;
+
+import com.example.demo.entity.CertificateTemplate;
+import com.example.demo.repository.CertificateTemplateRepository;
+import com.example.demo.service.TemplateService;
+import org.springframework.stereotype.Service;
+
+import java.net.URL;
+
+@Service
+public class TemplateServiceImpl implements TemplateService {
+
+    private final CertificateTemplateRepository templateRepository;
+
+    public TemplateServiceImpl(CertificateTemplateRepository templateRepository) {
+        this.templateRepository = templateRepository;
+    }
+
+    @Override
+    public CertificateTemplate addTemplate(CertificateTemplate template) {
+
+        templateRepository.findByTemplateName(template.getTemplateName())
+                .ifPresent(t -> {
+                    throw new RuntimeException("Template name exists");
+                });
+
+        // backgroundUrl validation
+        try {
+            new URL(template.getBackgroundUrl());
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid backgroundUrl");
+        }
+
+        return templateRepository.save(template);
+    }
+
+    @Override
+    public List<CertificateTemplate> getAllTemplates() {
+        return templateRepository.findAll();
+    }
+
+    @Override
+    public CertificateTemplate findById(Long id) {
+        return templateRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Template not found"));
+    }
+}
