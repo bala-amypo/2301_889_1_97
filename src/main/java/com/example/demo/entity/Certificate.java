@@ -4,8 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 
 public class Certificate{
-    Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    
+    @Id
     private Long id;
 
     @ManyToOne
