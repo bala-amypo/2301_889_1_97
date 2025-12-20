@@ -2,40 +2,39 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Certificate;
 import com.example.demo.service.CertificateService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/certificates")
+@RequiredArgsConstructor
 public class CertificateController {
 
-    private final CertificateService service;
+    private final CertificateService certificateService;
 
-    public CertificateController(CertificateService service) {
-        this.service = service;
-    }
-
-    // POST /certificates/generate/{studentId}/{templateId}
+    
     @PostMapping("/generate/{studentId}/{templateId}")
-    public Certificate generateCertificate(
-            @PathVariable Long studentId,
-            @PathVariable Long templateId) {
-
-        return service.generateCertificate(studentId, templateId);
+    public Certificate generateCertificate(@PathVariable Long studentId, @PathVariable Long templateId) {
+        return certificateService.generateCertificate(studentId, templateId);
     }
 
-    // GET /certificates/{certificateId}
+    
     @GetMapping("/{certificateId}")
-    public Certificate getCertificate(
-            @PathVariable Long certificateId) {
-
-        return service.getCertificate(certificateId);
+    public Certificate getCertificate(@PathVariable Long certificateId) {
+        return certificateService.getCertificate(certificateId);
     }
 
-    // GET /certificates/verify/code/{verificationCode}
+    
     @GetMapping("/verify/code/{verificationCode}")
-    public Certificate verifyByCode(
-            @PathVariable String verificationCode) {
+    public Certificate findByVerificationCode(@PathVariable String verificationCode) {
+        return certificateService.findByVerificationCode(verificationCode);
+    }
 
-        return service.findByVerificationCode(verificationCode);
+    
+    @GetMapping("/student/{studentId}")
+    public List<Certificate> getCertificatesByStudent(@PathVariable Long studentId) {
+        return certificateService.findByStudentId(studentId);
     }
 }

@@ -2,30 +2,25 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.CertificateTemplate;
 import com.example.demo.service.TemplateService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/templates")
+@RequiredArgsConstructor
 public class TemplateController {
 
-    private final TemplateService service;
+    private final TemplateService templateService;
 
-    public TemplateController(TemplateService service) {
-        this.service = service;
-    }
-
-    // POST /templates
     @PostMapping
-    public CertificateTemplate addTemplate(
-            @RequestBody CertificateTemplate template) {
-        return service.addTemplate(template);
+    public CertificateTemplate addTemplate(@RequestBody CertificateTemplate template) {
+        return templateService.addTemplate(template);
     }
 
-    // GET /templates
     @GetMapping
     public List<CertificateTemplate> getAllTemplates() {
-        return service.getAllTemplates();
+        return templateService.getAllTemplates();
     }
 }
