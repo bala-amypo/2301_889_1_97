@@ -1,12 +1,19 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Data;
+
+
+
 
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Data
+@Builder
 @Table(
         name = "certificates",
         uniqueConstraints = {

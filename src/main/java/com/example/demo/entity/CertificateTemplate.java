@@ -1,11 +1,18 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Data;
+
+
+
 
 
 import java.util.List;
 
 @Entity
+@Data
+@Builder
 @Table(
         name = "certificate_templates",
         uniqueConstraints = {
