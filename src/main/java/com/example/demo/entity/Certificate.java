@@ -29,6 +29,14 @@ public class Certificate {
     @Column(unique = true)
     private String verificationCode; // must start with "VC-"
 
+    @OneToMany(mappedBy = "certificate")
+private List<VerificationLog> verificationLogs = new ArrayList<>();
+
+public List<VerificationLog> getVerificationLogs() {
+    return verificationLogs;
+}
+
+
     public Certificate() {}
 
     public Certificate(Student student, CertificateTemplate template, LocalDate issuedDate,
@@ -65,9 +73,4 @@ public class Certificate {
     }
 }
 
-      @OneToMany(mappedBy = "certificate")
-      private List<VerificationLog> verificationLogs = new ArrayList<>();
-
-public List<VerificationLog> getVerificationLogs() {
-    return verificationLogs;
-}
+      
