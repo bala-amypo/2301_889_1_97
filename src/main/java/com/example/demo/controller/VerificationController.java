@@ -17,20 +17,19 @@ public class VerificationController {
         this.verificationService = verificationService;
     }
 
-    
+    // POST /verify/{verificationCode}
     @PostMapping("/{verificationCode}")
-    public VerificationLog verify(
-            @PathVariable String verificationCode,
-            HttpServletRequest request
-    ) {
-        String clientIp = request.getRemoteAddr();
-        return verificationService.verifyCertificate(verificationCode, clientIp);
+    public VerificationLog verifyCertificate(@PathVariable String verificationCode,
+                                             HttpServletRequest request) {
+        String ipAddress = request.getRemoteAddr();
+        return verificationService.verify(verificationCode, ipAddress);
     }
 
-    
+    // GET /verify/logs/{certificateId}
     @GetMapping("/logs/{certificateId}")
-    public List<VerificationLog> getLogs(@PathVariable Long certificateId) {
-        return verificationService.getLogsByCertificate(certificateId);
+    public List<VerificationLog> getVerificationLogs(@PathVariable Long certificateId) {
+        return verificationService.getLogs(certificateId);
     }
 }
+
 
