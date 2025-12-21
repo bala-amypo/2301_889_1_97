@@ -2,41 +2,65 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.ArrayList;
 
 @Entity
-@Table(
-    name = "certificates",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = "verificationCode")
-    }
-)
+@Table(name = "certificates")
 public class Certificate {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String verificationCode;
-    private List<VerificationLog> verificationLogs = new ArrayList<>();
+
+    // Many certificates can belong to one student
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private Student student;
+
+    // Many certificates can use one template
+    @ManyToOne
+    @JoinColumn(name = "template_id")
+    private CertificateTemplate template;
+
+    private LocalDate issuedDate;
+
+    @Column(length = 5000) // enough to store Base64 QR code
+    private String qrCodeUrl;
+
+    @Column(unique = true)
+    private String verificationCode; // must start with "VC-"
 
     public Certificate() {}
 
-    public Certificate(Long id, String name, String verificationCode) {
-        this.id = id;
-        this.name = name;
+    public Certificate(Student student, CertificateTemplate template, LocalDate issuedDate,
+                       String qrCodeUrl, String verificationCode) {
+        this.student = student;
+        this.template = template;
+        this.issuedDate = issuedDate;
+        this.qrCodeUrl = qrCodeUrl;
         this.verificationCode = verificationCode;
     }
 
-    public static Certificate create(Long id, String name, String code) {
-        return new Certificate(id, name, code);
-    }
-
-    // getters and setters
+    // Getters and Setters
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+
+    public Student getStudent() { return student; }
+    public void setStudent(Student student) { this.student = student; }
+
+    public CertificateTemplate getTemplate() { return template; }
+    public void setTemplate(CertificateTemplate template) { this.template = template; }
+
+    public LocalDate getIssuedDate() { return issuedDate; }
+    public void setIssuedDate(LocalDate issuedDate) { this.issuedDate = issuedDate; }
+
+    public String getQrCodeUrl() { return qrCodeUrl; }
+    public void setQrCodeUrl(String qrCodeUrl) { this.qrCodeUrl = qrCodeUrl; }
+
     public String getVerificationCode() { return verificationCode; }
-    public void setVerificationCode(String code) { this.verificationCode = code; }
-    public List<VerificationLog> getVerificationLogs() { return verificationLogs; }
-    public void setVerificationLogs(List<VerificationLog> logs) { this.verificationLogs = logs; }
+    public void setVerificationCode(String verificationCode) { this.verificationCode = verificationCode; }
+
+    // Factory method for easy creation
+    public static Certificate create(Student student, CertificateTemplate template,
+                                     LocalDate issuedDate, String qrCodeUrl, String verificationCode) {
+        return new Certificate(student, template, issuedDate, qrCodeUrl, verificationCode);
+    }
 }
