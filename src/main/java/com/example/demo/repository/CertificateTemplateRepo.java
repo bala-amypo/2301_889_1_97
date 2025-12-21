@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface CertificateTemplateRepo extends JpaRepository<CertificateTemplate, Long> {
+public interface CertificateTemplateRepo
+        extends JpaRepository<CertificateTemplate, Long> {
+
     Optional<CertificateTemplate> findByTemplateName(String templateName);
 }
+

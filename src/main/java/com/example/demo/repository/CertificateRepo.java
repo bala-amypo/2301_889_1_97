@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CertificateRepo extends JpaRepository<Certificate, Long> {
+
     Optional<Certificate> findByVerificationCode(String code);
+
     List<Certificate> findByStudent(Student student);
 }
+
