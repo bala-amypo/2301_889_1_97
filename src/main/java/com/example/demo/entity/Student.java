@@ -1,13 +1,20 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-
+import lombok.*;
 
 import java.util.List;
 
 @Entity
+@Table(
+        name = "students",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "email"),
+                @UniqueConstraint(columnNames = "rollNumber")
+        }
+)
 
-
+@Builder
 public class Student {
 
     @Id
@@ -22,7 +29,7 @@ public class Student {
     @Column(nullable = false, unique = true)
     private String rollNumber;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student")
     private List<Certificate> certificates;
 
     
@@ -78,8 +85,7 @@ public class Student {
         this.certificates = certificates;
     }
 
-
-
+    
 }
 
 
