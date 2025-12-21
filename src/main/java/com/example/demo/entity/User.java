@@ -1,9 +1,18 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-
+import lombok.*;
 
 @Entity
+@Table(
+        name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "email")
+        }
+)
+
+
+@Builder
 public class User {
 
     @Id
@@ -18,9 +27,10 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Builder.Default
-    private String role = "STAFF";
+    private String role;
 
+    
+    
     public User(Long id, String name, String email, String password, String role) {
         this.id = id;
         this.name = name;
@@ -72,5 +82,7 @@ public class User {
         this.role = role;
     }
 
-}
 
+
+
+}
