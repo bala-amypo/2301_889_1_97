@@ -1,12 +1,19 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-
+import lombok.*;
 
 import java.util.List;
 
 @Entity
+@Table(
+        name = "certificate_templates",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "templateName")
+        }
+)
 
+@Builder
 public class CertificateTemplate {
 
     @Id
@@ -22,9 +29,10 @@ public class CertificateTemplate {
 
     private String signatureName;
 
-    @OneToMany(mappedBy = "template", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "template")
     private List<Certificate> certificates;
 
+    
     
     public CertificateTemplate(Long id, String templateName, String backgroundUrl, String fontStyle,
             String signatureName, List<Certificate> certificates) {
@@ -86,5 +94,8 @@ public class CertificateTemplate {
     public void setCertificates(List<Certificate> certificates) {
         this.certificates = certificates;
     }
+
     
+
+
 }
