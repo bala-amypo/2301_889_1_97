@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Certificate;
 import com.example.demo.service.CertificateService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -10,26 +12,21 @@ public class CertificateController {
 
     private final CertificateService certificateService;
 
+    @Autowired
     public CertificateController(CertificateService certificateService) {
         this.certificateService = certificateService;
     }
 
-    // POST /certificates/generate/{studentId}/{templateId}
-    @PostMapping("/generate/{studentId}/{templateId}")
-    public Certificate generateCertificate(@PathVariable Long studentId,
-                                           @PathVariable Long templateId) {
-        return certificateService.generateCertificate(studentId, templateId);
+    @GetMapping("/{id}")
+    public ResponseEntity<Certificate> getCertificateById(@PathVariable Long id) {
+        Certificate certificate = certificateService.getCertificate(id);
+        return ResponseEntity.ok(certificate);
     }
 
-    // GET /certificates/{certificateId}
-    @GetMapping("/{certificateId}")
-    public Certificate getCertificate(@PathVariable Long certificateId) {
-        return certificateService.getCertificateById(certificateId);
-    }
-
-    // GET /certificates/verify/code/{verificationCode}
-    @GetMapping("/verify/code/{verificationCode}")
-    public Certificate getByVerificationCode(@PathVariable String verificationCode) {
-        return certificateService.getByVerificationCode(verificationCode);
+    @GetMapping("/verify")
+    public ResponseEntity<Certificate> getByVerificationCode(@RequestParam String code) {
+        Certificate certificate = certificateService.findByVerificationCode(code);
+        return ResponseEntity.ok(certificate);
     }
 }
+

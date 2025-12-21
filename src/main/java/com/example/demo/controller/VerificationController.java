@@ -2,34 +2,34 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.VerificationLog;
 import com.example.demo.service.VerificationService;
-import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/verify")
+@RequestMapping("/verification")
 public class VerificationController {
 
     private final VerificationService verificationService;
 
+    @Autowired
     public VerificationController(VerificationService verificationService) {
         this.verificationService = verificationService;
     }
 
-    // POST /verify/{verificationCode}
-    @PostMapping("/{verificationCode}")
-    public VerificationLog verifyCertificate(@PathVariable String verificationCode,
-                                             HttpServletRequest request) {
-        String ipAddress = request.getRemoteAddr();
-        return verificationService.verify(verificationCode, ipAddress);
+    @PostMapping("/verify")
+    public ResponseEntity<VerificationLog> verifyCertificate(@RequestParam String code,
+                                                             @RequestParam String clientIp) {
+        VerificationLog log = verificationService.verifyCertificate(code, clientIp);
+        return ResponseEntity.ok(log);
     }
 
-    // GET /verify/logs/{certificateId}
     @GetMapping("/logs/{certificateId}")
-    public List<VerificationLog> getVerificationLogs(@PathVariable Long certificateId) {
-        return verificationService.getLogs(certificateId);
+    public ResponseEntity<List<VerificationLog>> getLogs(@PathVariable Long certificateId) {
+        List<VerificationLog> logs = verificationService.getLogsByCertificate(certificateId);
+        return ResponseEntity.ok(logs);
     }
 }
 
