@@ -32,7 +32,7 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // 🔹 REGISTER
+    
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
 
@@ -47,7 +47,7 @@ public class AuthController {
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
-    // 🔹 LOGIN
+    
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
 
