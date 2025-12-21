@@ -2,6 +2,8 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "certificates")
@@ -11,33 +13,30 @@ public class Certificate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Many certificates can belong to one student
     @ManyToOne
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
-    // Many certificates can use one template
     @ManyToOne
-    @JoinColumn(name = "template_id")
+    @JoinColumn(name = "template_id", nullable = false)
     private CertificateTemplate template;
 
+    @Column(name = "issued_date", nullable = false)
     private LocalDate issuedDate;
 
-    @Column(length = 5000) // enough to store Base64 QR code
+    @Column(name = "qr_code_url", nullable = false)
     private String qrCodeUrl;
 
-    @Column(unique = true)
-    private String verificationCode; // must start with "VC-"
+    @Column(name = "verification_code", nullable = false, unique = true)
+    private String verificationCode;
 
-    @OneToMany(mappedBy = "certificate")
-private List<VerificationLog> verificationLogs = new ArrayList<>();
+    // OneToMany relationship with VerificationLog
+    @OneToMany(mappedBy = "certificate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VerificationLog> verificationLogs = new ArrayList<>();
 
-public List<VerificationLog> getVerificationLogs() {
-    return verificationLogs;
-}
-
-
-    public Certificate() {}
+    // Constructors
+    public Certificate() {
+    }
 
     public Certificate(Student student, CertificateTemplate template, LocalDate issuedDate,
                        String qrCodeUrl, String verificationCode) {
@@ -49,27 +48,72 @@ public List<VerificationLog> getVerificationLogs() {
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
 
-    public Student getStudent() { return student; }
-    public void setStudent(Student student) { this.student = student; }
+    public Long getId() {
+        return id;
+    }
 
-    public CertificateTemplate getTemplate() { return template; }
-    public void setTemplate(CertificateTemplate template) { this.template = template; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public LocalDate getIssuedDate() { return issuedDate; }
-    public void setIssuedDate(LocalDate issuedDate) { this.issuedDate = issuedDate; }
+    public Student getStudent() {
+        return student;
+    }
 
-    public String getQrCodeUrl() { return qrCodeUrl; }
-    public void setQrCodeUrl(String qrCodeUrl) { this.qrCodeUrl = qrCodeUrl; }
+    public void setStudent(Student student) {
+        this.student = student;
+    }
 
-    public String getVerificationCode() { return verificationCode; }
-    public void setVerificationCode(String verificationCode) { this.verificationCode = verificationCode; }
+    public CertificateTemplate getTemplate() {
+        return template;
+    }
 
-    // Factory method for easy creation
-    public static Certificate create(Student student, CertificateTemplate template,
-                                     LocalDate issuedDate, String qrCodeUrl, String verificationCode) {
-        return new Certificate(student, template, issuedDate, qrCodeUrl, verificationCode);
+    public void setTemplate(CertificateTemplate template) {
+        this.template = template;
+    }
+
+    public LocalDate getIssuedDate() {
+        return issuedDate;
+    }
+
+    public void setIssuedDate(LocalDate issuedDate) {
+        this.issuedDate = issuedDate;
+    }
+
+    public String getQrCodeUrl() {
+        return qrCodeUrl;
+    }
+
+    public void setQrCodeUrl(String qrCodeUrl) {
+        this.qrCodeUrl = qrCodeUrl;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public List<VerificationLog> getVerificationLogs() {
+        return verificationLogs;
+    }
+
+    public void setVerificationLogs(List<VerificationLog> verificationLogs) {
+        this.verificationLogs = verificationLogs;
+    }
+
+    // Convenience method to add a verification log
+    public void addVerificationLog(VerificationLog log) {
+        verificationLogs.add(log);
+        log.setCertificate(this);
+    }
+
+    public void removeVerificationLog(VerificationLog log) {
+        verificationLogs.remove(log);
+        log.setCertificate(null);
     }
 }
 
