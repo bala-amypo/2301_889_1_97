@@ -1,11 +1,17 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Data;
+
+
 
 
 import java.time.LocalDateTime;
 
 @Entity
+@Data
+@Builder
 @Table(name = "verification_logs")
 
 

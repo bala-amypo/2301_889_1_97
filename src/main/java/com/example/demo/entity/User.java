@@ -1,9 +1,15 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Data;
+
+
 
 
 @Entity
+@Data
+@Builder
 @Table(
         name = "users",
         uniqueConstraints = {
