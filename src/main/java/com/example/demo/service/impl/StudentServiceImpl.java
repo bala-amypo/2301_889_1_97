@@ -40,4 +40,4 @@ public class StudentServiceImpl implements StudentService {
                         new RuntimeException("Student not found"));
     }
 }
-`
+
