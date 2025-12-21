@@ -1,16 +1,22 @@
 package com.example.demo.security;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Date;
 import java.util.Map;
 
 @Component
 public class JwtUtil {
 
-    private final String secret = "secret-key-demo";
-    private final long expirationMs = 24 * 60 * 60 * 1000; // 1 day
+    private final String secret = "MySecretKey12345"; // Should match application.properties
+    private final Long expirationMs = 3600000L; // 1 hour
+
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes());
+    }
 
     public String generateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
@@ -18,27 +24,20 @@ public class JwtUtil {
                 .setSubject(subject)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public boolean validateToken(String token) {
         try {
-            parseToken(token);
+            Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
 
-    public Claims parseToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public String getEmailFromToken(String token) {
-        return parseToken(token).getSubject();
+    public Claims getClaims(String token) {
+        return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
     }
 }
