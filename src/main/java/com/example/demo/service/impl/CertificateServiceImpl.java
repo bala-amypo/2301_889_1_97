@@ -43,7 +43,7 @@ public class CertificateServiceImpl implements CertificateService {
         String qrBase64 = Base64.getEncoder()
                 .encodeToString(verificationCode.getBytes());
 
-        // Create Certificate manually without builder
+        
         Certificate certificate = new Certificate();
         certificate.setStudent(student);
         certificate.setTemplate(template);

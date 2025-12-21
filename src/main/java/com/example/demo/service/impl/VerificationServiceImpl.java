@@ -31,7 +31,7 @@ public class VerificationServiceImpl implements VerificationService {
 
         String status = (certificate != null) ? "SUCCESS" : "FAILED";
 
-        // Create VerificationLog manually
+        
         VerificationLog log = new VerificationLog();
         log.setCertificate(certificate);
         log.setVerifiedAt(LocalDateTime.now());
@@ -47,7 +47,7 @@ public class VerificationServiceImpl implements VerificationService {
         Certificate certificate = certificateRepository.findById(certificateId)
                 .orElseThrow(() -> new RuntimeException("Certificate not found"));
 
-        // Make sure Certificate entity has getVerificationLogs() method
+        
         return certificate.getVerificationLogs();
     }
 }

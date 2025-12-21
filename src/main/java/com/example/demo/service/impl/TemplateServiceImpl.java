@@ -25,7 +25,7 @@ public class TemplateServiceImpl implements TemplateService {
                     throw new RuntimeException("Template name exists");
                 });
 
-        // Background URL validation
+        
         try {
             new URL(template.getBackgroundUrl());
         } catch (Exception e) {
