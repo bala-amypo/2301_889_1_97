@@ -43,13 +43,13 @@ public class CertificateServiceImpl implements CertificateService {
         String qrBase64 = Base64.getEncoder()
                 .encodeToString(verificationCode.getBytes());
 
-        Certificate certificate = Certificate.builder()
-                .student(student)
-                .template(template)
-                .issuedDate(LocalDate.now())
-                .verificationCode(verificationCode)
-                .qrCodeUrl("data:image/png;base64," + qrBase64)
-                .build();
+        // Create Certificate manually without builder
+        Certificate certificate = new Certificate();
+        certificate.setStudent(student);
+        certificate.setTemplate(template);
+        certificate.setIssuedDate(LocalDate.now());
+        certificate.setVerificationCode(verificationCode);
+        certificate.setQrCodeUrl("data:image/png;base64," + qrBase64);
 
         return certificateRepository.save(certificate);
     }
@@ -57,25 +57,23 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public Certificate getCertificate(Long certificateId) {
         return certificateRepository.findById(certificateId)
-                .orElseThrow(() ->
-                        new RuntimeException("Certificate not found"));
+                .orElseThrow(() -> new RuntimeException("Certificate not found"));
     }
 
     @Override
     public Certificate findByVerificationCode(String code) {
         return certificateRepository.findByVerificationCode(code)
-                .orElseThrow(() ->
-                        new RuntimeException("Certificate not found"));
+                .orElseThrow(() -> new RuntimeException("Certificate not found"));
     }
 
     @Override
     public List<Certificate> findByStudentId(Long studentId) {
-
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
         return certificateRepository.findByStudent(student);
     }
 }
+
 
 

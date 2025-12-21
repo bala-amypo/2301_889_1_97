@@ -31,12 +31,12 @@ public class VerificationServiceImpl implements VerificationService {
 
         String status = (certificate != null) ? "SUCCESS" : "FAILED";
 
-        VerificationLog log = VerificationLog.builder()
-                .certificate(certificate)
-                .verifiedAt(LocalDateTime.now())
-                .status(status)
-                .ipAddress(clientIp)
-                .build();
+        // Create VerificationLog manually
+        VerificationLog log = new VerificationLog();
+        log.setCertificate(certificate);
+        log.setVerifiedAt(LocalDateTime.now());
+        log.setStatus(status);
+        log.setIpAddress(clientIp);
 
         return logRepository.save(log);
     }
@@ -45,12 +45,11 @@ public class VerificationServiceImpl implements VerificationService {
     public List<VerificationLog> getLogsByCertificate(Long certificateId) {
 
         Certificate certificate = certificateRepository.findById(certificateId)
-                .orElseThrow(() ->
-                        new RuntimeException("Certificate not found"));
+                .orElseThrow(() -> new RuntimeException("Certificate not found"));
 
+        // Make sure Certificate entity has getVerificationLogs() method
         return certificate.getVerificationLogs();
     }
 }
-
 
 
