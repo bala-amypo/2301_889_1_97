@@ -1,7 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
         }
 )
 
-@Builder
+
 public class Certificate {
 
     @Id

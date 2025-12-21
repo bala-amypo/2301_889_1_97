@@ -1,14 +1,14 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "verification_logs")
 
-@Builder
+
 public class VerificationLog {
 
     @Id
