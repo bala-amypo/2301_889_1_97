@@ -44,6 +44,7 @@ public class Certificate {
         this.verificationCode = verificationCode;
     }
 
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -61,6 +62,8 @@ public class Certificate {
 
     public String getVerificationCode() { return verificationCode; }
     public void setVerificationCode(String verificationCode) { this.verificationCode = verificationCode; }
+
+    
 }
 
 
