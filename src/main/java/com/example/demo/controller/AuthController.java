@@ -30,7 +30,7 @@ public class AuthController {
             return ResponseEntity.status(401).body("User not found");
         }
 
-        // Password check (BCrypt)
+        
         boolean matches = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder()
                 .matches(password, user.getPassword());
 

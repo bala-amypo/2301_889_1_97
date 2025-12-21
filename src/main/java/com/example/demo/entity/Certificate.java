@@ -30,11 +30,10 @@ public class Certificate {
     @Column(name = "verification_code", nullable = false, unique = true)
     private String verificationCode;
 
-    // OneToMany relationship with VerificationLog
+    
     @OneToMany(mappedBy = "certificate", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VerificationLog> verificationLogs = new ArrayList<>();
 
-    // Constructors
     public Certificate() {
     }
 
@@ -47,7 +46,7 @@ public class Certificate {
         this.verificationCode = verificationCode;
     }
 
-    // Getters and Setters
+    
 
     public Long getId() {
         return id;
@@ -105,7 +104,7 @@ public class Certificate {
         this.verificationLogs = verificationLogs;
     }
 
-    // Convenience method to add a verification log
+    
     public void addVerificationLog(VerificationLog log) {
         verificationLogs.add(log);
         log.setCertificate(this);
