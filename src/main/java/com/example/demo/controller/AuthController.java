@@ -1,76 +1,48 @@
 package com.example.demo.controller;
 
-
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
-
-import com.example.demo.service.UserService;
-import org.springframework.http.HttpStatus;
+import com.example.demo.security.JwtUtil;
+import com.example.demo.service.impl.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-
-
-
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
-    private final UserService userService;
-    private final JwtUtil jwtUtil;
-    private final BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtUtil jwtUtil;
 
-    public AuthController(
-            UserService userService,
-            JwtUtil jwtUtil,
-            BCryptPasswordEncoder passwordEncoder
-    ) {
-        this.userService = userService;
-        this.jwtUtil = jwtUtil;
-        this.passwordEncoder = passwordEncoder;
-    }
+    @Autowired
+    private UserServiceImpl userService;
 
-    
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
-
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         User user = User.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .password(request.getPassword())
-                .role(request.getRole())
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .build();
-
-        User savedUser = userService.register(user);
-        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+        userService.saveUser(user);
+        return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
     }
 
-    
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-
-        User user = userService.findByEmail(request.getEmail());
-
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        User user = userService.findByUsername(request.getUsername());
+        if(user != null && passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            String token = jwtUtil.generateToken(user.getUsername());
+            return ResponseEntity.ok(new AuthResponse(token));
         }
-
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", user.getId());
-        claims.put("email", user.getEmail());
-        claims.put("role", user.getRole());
-
-        String token = jwtUtil.generateToken(claims, user.getEmail());
-
-        AuthResponse response = new AuthResponse(
-                token,
-                user.getId(),
-                user.getEmail(),
-                user.getRole()
-        );
-
-        return ResponseEntity.ok(response);
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 }
+
