@@ -32,6 +32,8 @@ public class Certificate {
     @Column(nullable = false, unique = true)
     private String verificationCode;
 
+    private List<VerificationLog> verificationLogs;
+
     public Certificate() {}
 
     public Certificate(Long id, Student student, CertificateTemplate template,
@@ -62,8 +64,18 @@ public class Certificate {
 
     public String getVerificationCode() { return verificationCode; }
     public void setVerificationCode(String verificationCode) { this.verificationCode = verificationCode; }
+     
 
     
+
+    public List<VerificationLog> getVerificationLogs() {
+        return verificationLogs;
+    }
+
+    public void setVerificationLogs(List<VerificationLog> logs) {
+        this.verificationLogs = logs;
+    }
+
 }
 
 
