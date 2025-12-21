@@ -3,32 +3,32 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.CertificateTemplate;
 import com.example.demo.repository.CertificateTemplateRepository;
 import com.example.demo.service.TemplateService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class TemplateServiceImpl implements TemplateService {
 
     private final CertificateTemplateRepository templateRepository;
 
+    public TemplateServiceImpl(CertificateTemplateRepository templateRepository) {
+        this.templateRepository = templateRepository;
+    }
+
     @Override
     public CertificateTemplate addTemplate(CertificateTemplate template) {
-        templateRepository.findByTemplateName(template.getTemplateName()).ifPresent(t -> {
-            throw new RuntimeException("Template name exists");
-        });
 
-        // Validate background URL
-        if (template.getBackgroundUrl() == null || template.getBackgroundUrl().isBlank()) {
-            throw new RuntimeException("Invalid background URL");
-        }
+        templateRepository.findByTemplateName(template.getTemplateName())
+                .ifPresent(t -> {
+                    throw new RuntimeException("Template name exists");
+                });
+
+        // Background URL validation
         try {
             new URL(template.getBackgroundUrl());
-        } catch (MalformedURLException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Invalid background URL");
         }
 
@@ -43,7 +43,8 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public CertificateTemplate findById(Long id) {
         return templateRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Template not found"));
+                .orElseThrow(() ->
+                        new RuntimeException("Template not found"));
     }
 }
 

@@ -7,32 +7,31 @@ import com.example.demo.repository.CertificateRepository;
 import com.example.demo.repository.CertificateTemplateRepository;
 import com.example.demo.repository.StudentRepository;
 import com.example.demo.service.CertificateService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
-import javax.imageio.ImageIO;
-
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.qrcode.QRCodeWriter;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-
 @Service
-@RequiredArgsConstructor
 public class CertificateServiceImpl implements CertificateService {
 
     private final CertificateRepository certificateRepository;
     private final StudentRepository studentRepository;
     private final CertificateTemplateRepository templateRepository;
 
+    public CertificateServiceImpl(CertificateRepository certificateRepository,
+                                  StudentRepository studentRepository,
+                                  CertificateTemplateRepository templateRepository) {
+        this.certificateRepository = certificateRepository;
+        this.studentRepository = studentRepository;
+        this.templateRepository = templateRepository;
+    }
+
     @Override
     public Certificate generateCertificate(Long studentId, Long templateId) {
+
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
@@ -41,14 +40,15 @@ public class CertificateServiceImpl implements CertificateService {
 
         String verificationCode = "VC-" + UUID.randomUUID();
 
-        String qrCodeDataUrl = generateQRCodeDataUrl(verificationCode);
+        String qrBase64 = Base64.getEncoder()
+                .encodeToString(verificationCode.getBytes());
 
         Certificate certificate = Certificate.builder()
                 .student(student)
                 .template(template)
                 .issuedDate(LocalDate.now())
                 .verificationCode(verificationCode)
-                .qrCodeUrl(qrCodeDataUrl)
+                .qrCodeUrl("data:image/png;base64," + qrBase64)
                 .build();
 
         return certificateRepository.save(certificate);
@@ -57,35 +57,24 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public Certificate getCertificate(Long certificateId) {
         return certificateRepository.findById(certificateId)
-                .orElseThrow(() -> new RuntimeException("Certificate not found"));
+                .orElseThrow(() ->
+                        new RuntimeException("Certificate not found"));
     }
 
     @Override
     public Certificate findByVerificationCode(String code) {
         return certificateRepository.findByVerificationCode(code)
-                .orElseThrow(() -> new RuntimeException("Certificate not found"));
+                .orElseThrow(() ->
+                        new RuntimeException("Certificate not found"));
     }
 
     @Override
     public List<Certificate> findByStudentId(Long studentId) {
+
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
+
         return certificateRepository.findByStudent(student);
-    }
-
-    private String generateQRCodeDataUrl(String text) {
-        try {
-            QRCodeWriter qrCodeWriter = new QRCodeWriter();
-            var bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, 200, 200);
-            BufferedImage image = MatrixToImageWriter.toBufferedImage(bitMatrix);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
-            String base64 = Base64.getEncoder().encodeToString(baos.toByteArray());
-            return "data:image/png;base64," + base64;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to generate QR code");
-        }
     }
 }
 
