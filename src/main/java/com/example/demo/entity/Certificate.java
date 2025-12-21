@@ -64,3 +64,10 @@ public class Certificate {
         return new Certificate(student, template, issuedDate, qrCodeUrl, verificationCode);
     }
 }
+
+      @OneToMany(mappedBy = "certificate")
+      private List<VerificationLog> verificationLogs = new ArrayList<>();
+
+public List<VerificationLog> getVerificationLogs() {
+    return verificationLogs;
+}
