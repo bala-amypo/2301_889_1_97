@@ -1,12 +1,14 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "verification_logs")
 
+@Builder
 public class VerificationLog {
 
     @Id
@@ -19,9 +21,7 @@ public class VerificationLog {
 
     private LocalDateTime verifiedAt;
 
-    private String status; 
-
-    private String ipAddress;
+    private String status;
 
     public VerificationLog(Long id, Certificate certificate, LocalDateTime verifiedAt, String status,
             String ipAddress) {
@@ -31,6 +31,10 @@ public class VerificationLog {
         this.status = status;
         this.ipAddress = ipAddress;
     }
+
+    private String ipAddress;
+
+    
 
     public VerificationLog() {
     }
@@ -74,5 +78,6 @@ public class VerificationLog {
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
     }
+
 
 }
