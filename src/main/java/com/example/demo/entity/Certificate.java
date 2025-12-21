@@ -1,13 +1,20 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Table(
+        name = "certificates",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "verificationCode")
+        }
+)
 
+@Builder
 public class Certificate {
 
     @Id
@@ -24,24 +31,23 @@ public class Certificate {
 
     private LocalDate issuedDate;
 
-    @Column(unique = true, nullable = false)
-    private String verificationCode;
-
-    @Lob
+    @Column(length = 5000)
     private String qrCodeUrl;
 
-    @OneToMany(mappedBy = "certificate", cascade = CascadeType.ALL)
-    private List<VerificationLog> verificationLogs;
+    @Column(nullable = false, unique = true)
+    private String verificationCode;
 
-        
-    public Certificate(Long id, Student student, CertificateTemplate template, LocalDate issuedDate,
-            String verificationCode, String qrCodeUrl, List<VerificationLog> verificationLogs) {
+    @OneToMany(mappedBy = "certificate")
+    private List<VerificationLog> verificationLogs;
+    
+    public Certificate(Long id, Student student, CertificateTemplate template, LocalDate issuedDate, String qrCodeUrl,
+            String verificationCode, List<VerificationLog> verificationLogs) {
         this.id = id;
         this.student = student;
         this.template = template;
         this.issuedDate = issuedDate;
-        this.verificationCode = verificationCode;
         this.qrCodeUrl = qrCodeUrl;
+        this.verificationCode = verificationCode;
         this.verificationLogs = verificationLogs;
     }
 
@@ -80,20 +86,20 @@ public class Certificate {
         this.issuedDate = issuedDate;
     }
 
-    public String getVerificationCode() {
-        return verificationCode;
-    }
-
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
-    }
-
     public String getQrCodeUrl() {
         return qrCodeUrl;
     }
 
     public void setQrCodeUrl(String qrCodeUrl) {
         this.qrCodeUrl = qrCodeUrl;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
     }
 
     public List<VerificationLog> getVerificationLogs() {
@@ -103,6 +109,8 @@ public class Certificate {
     public void setVerificationLogs(List<VerificationLog> verificationLogs) {
         this.verificationLogs = verificationLogs;
     }
+
+
 
 }
 
