@@ -1,27 +1,15 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-
-
-
-
-
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
-@Data
-@Builder
 @Table(
-        name = "certificates",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = "verificationCode")
-        }
+    name = "certificates",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = "verificationCode")
+    }
 )
-
-
 public class Certificate {
 
     @Id
@@ -29,97 +17,52 @@ public class Certificate {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
+    @JoinColumn(name = "student_id")
     private Student student;
 
     @ManyToOne
-    @JoinColumn(name = "template_id", nullable = false)
+    @JoinColumn(name = "template_id")
     private CertificateTemplate template;
 
     private LocalDate issuedDate;
 
-    @Column(length = 5000)
+    @Column(length = 2000)
     private String qrCodeUrl;
 
     @Column(nullable = false, unique = true)
     private String verificationCode;
 
-    @OneToMany(mappedBy = "certificate")
-    private List<VerificationLog> verificationLogs;
-    
-    public Certificate(Long id, Student student, CertificateTemplate template, LocalDate issuedDate, String qrCodeUrl,
-            String verificationCode, List<VerificationLog> verificationLogs) {
+    public Certificate() {}
+
+    public Certificate(Long id, Student student, CertificateTemplate template,
+                       LocalDate issuedDate, String qrCodeUrl, String verificationCode) {
         this.id = id;
         this.student = student;
         this.template = template;
         this.issuedDate = issuedDate;
         this.qrCodeUrl = qrCodeUrl;
         this.verificationCode = verificationCode;
-        this.verificationLogs = verificationLogs;
     }
 
-    public Certificate() {
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getId() {
-        return id;
-    }
+    public Student getStudent() { return student; }
+    public void setStudent(Student student) { this.student = student; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public CertificateTemplate getTemplate() { return template; }
+    public void setTemplate(CertificateTemplate template) { this.template = template; }
 
-    public Student getStudent() {
-        return student;
-    }
+    public LocalDate getIssuedDate() { return issuedDate; }
+    public void setIssuedDate(LocalDate issuedDate) { this.issuedDate = issuedDate; }
 
-    public void setStudent(Student student) {
-        this.student = student;
-    }
+    public String getQrCodeUrl() { return qrCodeUrl; }
+    public void setQrCodeUrl(String qrCodeUrl) { this.qrCodeUrl = qrCodeUrl; }
 
-    public CertificateTemplate getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(CertificateTemplate template) {
-        this.template = template;
-    }
-
-    public LocalDate getIssuedDate() {
-        return issuedDate;
-    }
-
-    public void setIssuedDate(LocalDate issuedDate) {
-        this.issuedDate = issuedDate;
-    }
-
-    public String getQrCodeUrl() {
-        return qrCodeUrl;
-    }
-
-    public void setQrCodeUrl(String qrCodeUrl) {
-        this.qrCodeUrl = qrCodeUrl;
-    }
-
-    public String getVerificationCode() {
-        return verificationCode;
-    }
-
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
-    }
-
-    public List<VerificationLog> getVerificationLogs() {
-        return verificationLogs;
-    }
-
-    public void setVerificationLogs(List<VerificationLog> verificationLogs) {
-        this.verificationLogs = verificationLogs;
-    }
-
-
-
+    public String getVerificationCode() { return verificationCode; }
+    public void setVerificationCode(String verificationCode) { this.verificationCode = verificationCode; }
 }
+
 
 
 
