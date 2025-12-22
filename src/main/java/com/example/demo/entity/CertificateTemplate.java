@@ -39,8 +39,12 @@ public class CertificateTemplate {
     public String getTemplateName() { return templateName; }
     public void setTemplateName(String templateName) { this.templateName = templateName; }
 
-    public String getBackgroundUrl() { return backgroundUrl; }
-    public void setBackgroundUrl(String backgroundUrl) { this.backgroundUrl = backgroundUrl; }
+    public String getBackgroundUrl() { 
+        return backgroundUrl; 
+    }
+    public void setBackgroundUrl(String backgroundUrl) { 
+        this.backgroundUrl = backgroundUrl; 
+    }
 
     public String getFontStyle() { return fontStyle; }
     public void setFontStyle(String fontStyle) { this.fontStyle = fontStyle; }
