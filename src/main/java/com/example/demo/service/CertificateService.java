@@ -14,3 +14,4 @@ public interface CertificateService {
 
     List<Certificate> findByStudentId(Long studentId);
 }
+

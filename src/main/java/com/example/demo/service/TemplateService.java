@@ -12,3 +12,4 @@ public interface TemplateService {
 
     CertificateTemplate findById(Long id);
 }
+
