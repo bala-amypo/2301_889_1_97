@@ -7,6 +7,7 @@ import com.example.demo.repository.CertificateRepository;
 import com.example.demo.repository.CertificateTemplateRepository;
 import com.example.demo.repository.StudentRepository;
 import com.example.demo.service.CertificateService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -15,41 +16,32 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class CertificateServiceImpl implements CertificateService {
 
     private final CertificateRepository certificateRepository;
     private final StudentRepository studentRepository;
     private final CertificateTemplateRepository templateRepository;
 
-    public CertificateServiceImpl(CertificateRepository certificateRepository,
-                                  StudentRepository studentRepository,
-                                  CertificateTemplateRepository templateRepository) {
-        this.certificateRepository = certificateRepository;
-        this.studentRepository = studentRepository;
-        this.templateRepository = templateRepository;
-    }
-
     @Override
     public Certificate generateCertificate(Long studentId, Long templateId) {
-
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
-
         CertificateTemplate template = templateRepository.findById(templateId)
                 .orElseThrow(() -> new RuntimeException("Template not found"));
 
-        String verificationCode = "VC-" + UUID.randomUUID();
+        String verificationCode = "VC-" + UUID.randomUUID().toString();
 
-        String qrBase64 = Base64.getEncoder()
-                .encodeToString(verificationCode.getBytes());
+        // Simple Base64 QR placeholder
+        String qrCodeBase64 = "data:image/png;base64," + Base64.getEncoder().encodeToString(verificationCode.getBytes());
 
-        
-        Certificate certificate = new Certificate();
-        certificate.setStudent(student);
-        certificate.setTemplate(template);
-        certificate.setIssuedDate(LocalDate.now());
-        certificate.setVerificationCode(verificationCode);
-        certificate.setQrCodeUrl("data:image/png;base64," + qrBase64);
+        Certificate certificate = Certificate.builder()
+                .student(student)
+                .template(template)
+                .issuedDate(LocalDate.now())
+                .verificationCode(verificationCode)
+                .qrCodeUrl(qrCodeBase64)
+                .build();
 
         return certificateRepository.save(certificate);
     }
@@ -70,10 +62,6 @@ public class CertificateServiceImpl implements CertificateService {
     public List<Certificate> findByStudentId(Long studentId) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
-
         return certificateRepository.findByStudent(student);
     }
 }
-
-
-
