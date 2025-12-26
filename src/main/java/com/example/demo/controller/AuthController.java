@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -8,10 +9,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/auth")
@@ -23,6 +23,21 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    // REGISTER
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody User user) {
+
+        if (userRepository.existsByEmail(user.getEmail())) {
+            return ResponseEntity.badRequest().body("User already exists");
+        }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+
+        return ResponseEntity.ok("User registered successfully");
+    }
+
+    // LOGIN
     @PostMapping("/login")
     public ResponseEntity<String> login(
             @RequestParam String email,
@@ -32,8 +47,12 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(email, password)
         );
 
-        String token = jwtUtil.generateToken(authentication.getName());
+        // 🔥 FIX HERE
+        String token = jwtUtil.generateToken(
+                new HashMap<>(),
+                authentication.getName()
+        );
+
         return ResponseEntity.ok(token);
     }
 }
-
