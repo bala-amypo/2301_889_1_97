@@ -4,17 +4,26 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
-@Table(name = "certificates")
-
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "certificates")
 public class Certificate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String verificationCode;
+
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String qrCodeUrl;
+
+    private LocalDate issuedDate;
 
     @ManyToOne
     @JoinColumn(name = "student_id")
@@ -23,89 +32,4 @@ public class Certificate {
     @ManyToOne
     @JoinColumn(name = "template_id")
     private CertificateTemplate template;
-
-    private LocalDate issuedDate;
-
-    @Column(unique = true)
-    private String verificationCode;
-
-    @Column(columnDefinition = "TEXT")
-    private String qrCodeUrl;
-
-    @OneToMany(mappedBy = "certificate")
-    private List<VerificationLog> verificationLogs;
-    
-
-    
-    public Certificate(Long id, Student student, CertificateTemplate template, LocalDate issuedDate,
-            String verificationCode, String qrCodeUrl, List<VerificationLog> verificationLogs) {
-        this.id = id;
-        this.student = student;
-        this.template = template;
-        this.issuedDate = issuedDate;
-        this.verificationCode = verificationCode;
-        this.qrCodeUrl = qrCodeUrl;
-        this.verificationLogs = verificationLogs;
-    }
-
-    public Certificate() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Student getStudent() {
-        return student;
-    }
-
-    public void setStudent(Student student) {
-        this.student = student;
-    }
-
-    public CertificateTemplate getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(CertificateTemplate template) {
-        this.template = template;
-    }
-
-    public LocalDate getIssuedDate() {
-        return issuedDate;
-    }
-
-    public void setIssuedDate(LocalDate issuedDate) {
-        this.issuedDate = issuedDate;
-    }
-
-    public String getVerificationCode() {
-        return verificationCode;
-    }
-
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
-    }
-
-    public String getQrCodeUrl() {
-        return qrCodeUrl;
-    }
-
-    public void setQrCodeUrl(String qrCodeUrl) {
-        this.qrCodeUrl = qrCodeUrl;
-    }
-
-    public List<VerificationLog> getVerificationLogs() {
-        return verificationLogs;
-    }
-
-    public void setVerificationLogs(List<VerificationLog> verificationLogs) {
-        this.verificationLogs = verificationLogs;
-    }
-
-
 }
