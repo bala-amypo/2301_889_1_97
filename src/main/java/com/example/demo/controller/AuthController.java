@@ -1,58 +1,55 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtUtil;
-import lombok.RequiredArgsConstructor;
+import com.example.demo.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
-@RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    // REGISTER
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User user) {
-
-        if (userRepository.existsByEmail(user.getEmail())) {
-            return ResponseEntity.badRequest().body("User already exists");
-        }
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-
-        return ResponseEntity.ok("User registered successfully");
+    // Matching the test case constructor exactly
+    public AuthController(UserService userService, JwtUtil jwtUtil) {
+        this.userService = userService;
+        this.jwtUtil = jwtUtil;
     }
 
-    // LOGIN
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
+        User user = User.builder()
+                .name(req.getName())
+                .email(req.getEmail())
+                .password(req.getPassword())
+                .role(req.getRole())
+                .build();
+        return ResponseEntity.ok(userService.register(user));
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<String> login(
-            @RequestParam String email,
-            @RequestParam String password) {
+    public ResponseEntity<?> login(@RequestBody AuthRequest req) {
+        User user = userService.findByEmail(req.getEmail());
+        if (user != null && passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("role", user.getRole());
+            claims.put("email", user.getEmail());
+            claims.put("userId", user.getId());
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
-        );
-
-        // 🔥 FIX HERE
-        String token = jwtUtil.generateToken(
-                new HashMap<>(),
-                authentication.getName()
-        );
-
-        return ResponseEntity.ok(token);
+            String token = jwtUtil.generateToken(claims, user.getEmail());
+            return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getEmail(), user.getRole()));
+        }
+        return ResponseEntity.status(401).body("Invalid credentials");
     }
 }
